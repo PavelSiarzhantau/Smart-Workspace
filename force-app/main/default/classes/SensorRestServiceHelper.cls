@@ -76,4 +76,17 @@ public with sharing class SensorRestServiceHelper {
         returnedResults.put('sensorsToCreate', sensorsToCreate);
         return returnedResults;
     }
+    public static List<Sensor_Event__c> assignSensorToSensorEvent(
+        List<Sensor__c> createdSensors,
+        Map<String, List<Sensor_Event__c>> sensorsWithEvents
+    ) {
+        List<Sensor_Event__c> sensorEventsToCrearte = new List<Sensor_Event__c>();
+        for (Sensor__c sensor : createdSensors) {
+            for (Sensor_Event__c event : sensorsWithEvents.get(sensor.Name)) {
+                event.Sensor__c = sensor.Id;
+                sensorEventsToCrearte.add(event);
+            }
+        }
+        return sensorEventsToCrearte;
+    }
 }

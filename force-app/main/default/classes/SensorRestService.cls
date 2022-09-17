@@ -30,6 +30,10 @@ global with sharing class SensorRestService {
         List<Sensor__c> duplicateSensors = new List<Sensor__c>();
         Map<String, Sensor__c> duplicateSensorsMap = new Map<String, Sensor__c>();
         Map<String, List<SObject>> separetedSensors = new Map<String, List<SObject>>();
+        List<Sensor_Event__c> sensorEventsToCrearte = new List<Sensor_Event__c>();
+        List<Sensor__c> sensorsToCreate = new List<Sensor__c>();
+        List<Sensor_Event__c> additionSensorsEventsToCreate = new List<Sensor_Event__c>();
+
         //CREATE sensors and events
         try {
             sensorsWithEvents = SensorRestServiceHelper.getParametersFromRequest(
@@ -47,6 +51,25 @@ global with sharing class SensorRestService {
         );
         separetedSensors = SensorRestServiceHelper.separateSensors(
             duplicateSensorsMap,
+            sensorsWithEvents
+        );
+        sensorEventsToCrearte = separetedSensors.get('sensorEventsToCrearte');
+        sensorsToCreate = separetedSensors.get('sensorsToCreate');
+        if (Schema.sObjectType.Sensor__c.isCreateable()) {
+            try {
+                if (throwExceptionSensorsCreate && Test.isRunningTest()) {
+                    throw new SensorException(TEST_EXCEPTION_MESSAGE);
+                }
+                insert sensorsToCreate;
+            } catch (Exception e) {
+                return new SensorRestService.SensorWrapper(
+                    true,
+                    e.getMessage()
+                );
+            }
+        }
+        additionSensorsEventsToCreate = SensorRestServiceHelper.assignSensorToSensorEvent(
+            sensorsToCreate,
             sensorsWithEvents
         );
         SensorRestService.SensorWrapper response = new SensorRestService.SensorWrapper(

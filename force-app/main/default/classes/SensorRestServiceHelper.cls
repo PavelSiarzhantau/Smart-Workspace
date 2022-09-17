@@ -42,4 +42,13 @@ public with sharing class SensorRestServiceHelper {
         System.debug('sensorsWithEvents' + sensorsWithEvents);
         return sensorsWithEvents;
     }
+    public static Map<String, Sensor__c> getduplicateSensorsMap(
+        List<Sensor__c> duplicateSensors
+    ) {
+        Map<String, Sensor__c> duplicateSensorsMap = new Map<String, Sensor__c>();
+        for (Sensor__c sensor : duplicateSensors) {
+            duplicateSensorsMap.put(sensor.Name, sensor);
+        }
+        return duplicateSensorsMap;
+    }
 }

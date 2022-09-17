@@ -26,6 +26,9 @@ global with sharing class SensorRestService {
     @HttpPost
     global static SensorRestService.SensorWrapper createOrUpdateSensorWithEvents() {
         Map<String, List<Sensor_Event__c>> sensorsWithEvents = new Map<String, List<Sensor_Event__c>>();
+        Set<String> sensorNamesFromRequest = new Set<String>();
+        List<Sensor__c> duplicateSensors = new List<Sensor__c>();
+        Map<String, Sensor__c> duplicateSensorsMap = new Map<String, Sensor__c>();
 
         //CREATE sensors and events
         try {
@@ -39,6 +42,10 @@ global with sharing class SensorRestService {
         duplicateSensors = SensorRestServiceModel.getduplicateSensors(
             sensorNamesFromRequest
         );
+        duplicateSensorsMap = SensorRestServiceHelper.getduplicateSensorsMap(
+            duplicateSensors
+        );
+
         SensorRestService.SensorWrapper response = new SensorRestService.SensorWrapper(
             false,
             '::::NO ERROR::::'

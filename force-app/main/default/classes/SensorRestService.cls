@@ -33,6 +33,9 @@ global with sharing class SensorRestService {
         List<Sensor_Event__c> sensorEventsToCrearte = new List<Sensor_Event__c>();
         List<Sensor__c> sensorsToCreate = new List<Sensor__c>();
         List<Sensor_Event__c> additionSensorsEventsToCreate = new List<Sensor_Event__c>();
+        List<Sensor__c> sensorsToUpdate = new List<Sensor__c>();
+        List<Sensor_Event__c> sensorsEventsToUpdate = new List<Sensor_Event__c>();
+        Integer counter = 0;
 
         //CREATE sensors and events
         try {
@@ -71,6 +74,26 @@ global with sharing class SensorRestService {
         additionSensorsEventsToCreate = SensorRestServiceHelper.assignSensorToSensorEvent(
             sensorsToCreate,
             sensorsWithEvents
+        );
+        sensorEventsToCrearte.addAll(additionSensorsEventsToCreate);
+        if (Schema.sObjectType.Sensor_Event__c.isCreateable()) {
+            try {
+                if (throwExceptionSensorsEventsCreate && Test.isRunningTest()) {
+                    throw new SensorException(TEST_EXCEPTION_MESSAGE);
+                }
+                insert sensorEventsToCrearte;
+            } catch (Exception e) {
+                return new SensorRestService.SensorWrapper(
+                    true,
+                    e.getMessage()
+                );
+            }
+        }
+
+        //UPDATE Sensor Events
+        sensorsToUpdate = SensorRestServiceModel.getSensorsToUpdate(
+            sensorEventsToCrearte,
+            sensorNamesFromRequest
         );
         SensorRestService.SensorWrapper response = new SensorRestService.SensorWrapper(
             false,

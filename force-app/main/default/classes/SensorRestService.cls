@@ -29,7 +29,7 @@ global with sharing class SensorRestService {
         Set<String> sensorNamesFromRequest = new Set<String>();
         List<Sensor__c> duplicateSensors = new List<Sensor__c>();
         Map<String, Sensor__c> duplicateSensorsMap = new Map<String, Sensor__c>();
-
+        Map<String, List<SObject>> separetedSensors = new Map<String, List<SObject>>();
         //CREATE sensors and events
         try {
             sensorsWithEvents = SensorRestServiceHelper.getParametersFromRequest(
@@ -45,7 +45,10 @@ global with sharing class SensorRestService {
         duplicateSensorsMap = SensorRestServiceHelper.getduplicateSensorsMap(
             duplicateSensors
         );
-
+        separetedSensors = SensorRestServiceHelper.separateSensors(
+            duplicateSensorsMap,
+            sensorsWithEvents
+        );
         SensorRestService.SensorWrapper response = new SensorRestService.SensorWrapper(
             false,
             '::::NO ERROR::::'

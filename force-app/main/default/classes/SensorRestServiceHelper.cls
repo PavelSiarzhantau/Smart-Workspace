@@ -51,4 +51,29 @@ public with sharing class SensorRestServiceHelper {
         }
         return duplicateSensorsMap;
     }
+    public static Map<String, List<SObject>> separateSensors(
+        Map<String, Sensor__c> duplicateSensorsMap,
+        Map<String, List<Sensor_Event__c>> sensorsWithEvents
+    ) {
+        Map<String, List<SObject>> returnedResults = new Map<String, List<SObject>>();
+        List<Sensor_Event__c> sensorEventsToCrearte = new List<Sensor_Event__c>();
+        List<Sensor__c> sensorsToCreate = new List<Sensor__c>();
+        for (String sensorName : sensorsWithEvents.keySet()) {
+            if (duplicateSensorsMap.containsKey(sensorName)) {
+                for (
+                    Sensor_Event__c event : sensorsWithEvents.get(sensorName)
+                ) {
+                    event.Sensor__c = duplicateSensorsMap.get(sensorName).Id;
+                    sensorEventsToCrearte.add(event);
+                }
+            } else {
+                Sensor__c sensor = new Sensor__c();
+                sensor.Name = sensorName;
+                sensorsToCreate.add(sensor);
+            }
+        }
+        returnedResults.put('sensorEventsToCrearte', sensorEventsToCrearte);
+        returnedResults.put('sensorsToCreate', sensorsToCreate);
+        return returnedResults;
+    }
 }

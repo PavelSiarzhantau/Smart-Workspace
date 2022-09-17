@@ -95,6 +95,24 @@ global with sharing class SensorRestService {
             sensorEventsToCrearte,
             sensorNamesFromRequest
         );
+        sensorsEventsToUpdate = SensorRestServiceHelper.prepareSensorsEventsToUpdate(
+            sensorsToUpdate,
+            duplicateSensorsMap
+        );
+        if (Schema.SObjectType.Sensor_Event__c.isUpdateable()) {
+            try {
+                if (throwExceptionSensorsEventsUpdate && Test.isRunningTest()) {
+                    throw new SensorException(TEST_EXCEPTION_MESSAGE);
+                }
+                update sensorsEventsToUpdate;
+            } catch (Exception e) {
+                return new SensorRestService.SensorWrapper(
+                    true,
+                    e.getMessage()
+                );
+            }
+        }
+
         SensorRestService.SensorWrapper response = new SensorRestService.SensorWrapper(
             false,
             '::::NO ERROR::::'

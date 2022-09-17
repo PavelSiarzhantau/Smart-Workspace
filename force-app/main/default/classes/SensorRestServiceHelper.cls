@@ -89,4 +89,44 @@ public with sharing class SensorRestServiceHelper {
         }
         return sensorEventsToCrearte;
     }
+    public static List<Sensor_Event__c> prepareSensorsEventsToUpdate(
+        List<Sensor__c> updatedSensors,
+        Map<String, Sensor__c> duplicateSensorsMap
+    ) {
+        Integer counter = 0;
+        List<Sensor_Event__c> sensorsEventsToUpdate = new List<Sensor_Event__c>();
+        for (Sensor__c sensor : updatedSensors) {
+            counter = 0;
+            for (Sensor_Event__c event : sensor.Sensor_Events__r) {
+                if (!duplicateSensorsMap.containsKey((sensor.Name))) {
+                    if (counter == 0) {
+                        counter++;
+                    } else {
+                        event.Sensor_Event__c = sensor.Sensor_Events__r[
+                                counter - 1
+                            ]
+                            .Id;
+                        counter++;
+                    }
+                } else {
+                    if (counter == 0) {
+                        event.Sensor_Event__c = duplicateSensorsMap.get(
+                                event.Sensor__r.Name
+                            )
+                            .Sensor_Events__r[counter]
+                            .Id;
+                        counter++;
+                    } else {
+                        event.Sensor_Event__c = sensor.Sensor_Events__r[
+                                counter - 1
+                            ]
+                            .Id;
+                        counter++;
+                    }
+                }
+                sensorsEventsToUpdate.add(event);
+            }
+        }
+        return sensorsEventsToUpdate;
+    }
 }

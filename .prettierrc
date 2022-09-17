@@ -1,0 +1,30 @@
+{
+  "trailingComma": "none",
+  "printWidth": 80,
+  "tabWidth": 2,
+  "overrides": [
+    {
+      "files": "**/lwc/**/*.html",
+      "options": {
+        "tabWidth": 4,
+        "printWidth": 80,
+        "parser": "lwc"
+      }
+    },
+    {
+      "files": "**/*.{cls,trigger,apex}",
+      "options": {
+        "apexInsertFinalNewline": true,
+        "printWidth": 80,
+        "tabWidth": 4
+      }
+    },
+    {
+      "files": "*.{cmp,page,component}",
+      "options": {
+        "parser": "html",
+        "tabWidth": 4
+      }
+    }
+  ]
+}

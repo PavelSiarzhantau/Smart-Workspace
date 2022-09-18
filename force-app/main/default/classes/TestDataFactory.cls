@@ -17,6 +17,37 @@ public with sharing class TestDataFactory {
         }
         return request;
     }
+    public static Map<String, List<Sensor_Event__c>> createMapWithSensorsAndEvents() {
+        Map<String, List<Sensor_Event__c>> mapWithSensorsAndEvents = new Map<String, List<Sensor_Event__c>>();
+        List<Sensor_Event__c> listOfEvents = new List<Sensor_Event__c>();
+        Sensor__c sensor = new Sensor__c(Name = '1');
+        Sensor_Event__c event1 = new Sensor_Event__c(
+            x__c = 22,
+            y__c = 17,
+            z__c = 197
+        );
+        Sensor_Event__c event2 = new Sensor_Event__c(
+            x__c = 23,
+            y__c = 45,
+            z__c = 14
+        );
+        Sensor_Event__c event3 = new Sensor_Event__c(
+            x__c = 22,
+            y__c = 43,
+            z__c = 196
+        );
+        Sensor_Event__c event4 = new Sensor_Event__c(
+            x__c = 24,
+            y__c = 42,
+            z__c = 198
+        );
+        listOfEvents.add(event1);
+        listOfEvents.add(event2);
+        listOfEvents.add(event3);
+        listOfEvents.add(event4);
+        mapWithSensorsAndEvents.put(sensor.Name, listOfEvents);
+        return mapWithSensorsAndEvents;
+    }
     public static User createTestUser(String profile) {
         User user = new User(
             ProfileId = [SELECT Id FROM Profile WHERE Name = :profile]
@@ -65,5 +96,65 @@ public with sharing class TestDataFactory {
             mapOfSensors.put(sensor.Name, sensor);
         }
         return mapOfSensors;
+    }
+    public static List<Sensor_Event__c> createListofEvents(
+        Integer countOfEvents
+    ) {
+        List<Sensor_Event__c> listofSensorEvents = new List<Sensor_Event__c>();
+        for (Integer i = 0; i < countOfEvents; i++) {
+            Integer randomNumber1 = Integer.valueof((Math.random() * 100));
+            Integer randomNumber2 = Integer.valueof((Math.random() * 100));
+            Integer randomNumber3 = Integer.valueof((Math.random() * 100));
+            Sensor_Event__c event = new Sensor_Event__c(
+                x__c = randomNumber1,
+                y__c = randomNumber2,
+                z__c = randomNumber3
+            );
+            listofSensorEvents.add(event);
+        }
+        return listofSensorEvents;
+    }
+    public static Map<String, Sensor__c> getDuplicateSensorsMap(
+        Integer countOfSensors
+    ) {
+        List<Sensor__c> listOfInsertedSensors = insertListOfSensors(
+            countOfSensors,
+            true
+        );
+        Map<String, Sensor__c> duplicateSensorsMap = new Map<String, Sensor__c>();
+        for (Sensor__c sensor : listOfInsertedSensors) {
+            duplicateSensorsMap.put(sensor.Name, sensor);
+        }
+        return duplicateSensorsMap;
+    }
+    public static Map<String, List<Sensor_Event__c>> createSensorsWithEvents(
+        Integer countOfEvents,
+        Integer countOfSensor
+    ) {
+        List<Sensor__c> listOfNamesOfSensorsFromDatabase = insertListOfSensors(
+            countOfSensor,
+            false
+        );
+        Set<String> setOfNamesOfSensorsFromDatabase = new Set<String>();
+        for (Sensor__c sensor : listOfNamesOfSensorsFromDatabase) {
+            setOfNamesOfSensorsFromDatabase.add(sensor.Name);
+        }
+        List<Sensor__c> listOfSensorsFromDatabase = [
+            SELECT Id, Name
+            FROM Sensor__c
+            WHERE Name IN :setOfNamesOfSensorsFromDatabase
+        ];
+        List<Sensor__c> listOfSensors = createListOfSensors(countOfSensor);
+        List<Sensor__c> finalLisrOfSensors = new List<Sensor__c>();
+        Map<String, List<Sensor_Event__c>> mapSensorsWithEvents = new Map<String, List<Sensor_Event__c>>();
+        finalLisrOfSensors.addAll(listOfSensorsFromDatabase);
+        finalLisrOfSensors.addAll(listOfSensors);
+        for (Sensor__c sensor : finalLisrOfSensors) {
+            mapSensorsWithEvents.put(
+                sensor.Name,
+                createListofEvents(countOfEvents)
+            );
+        }
+        return mapSensorsWithEvents;
     }
 }

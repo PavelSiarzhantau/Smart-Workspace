@@ -103,4 +103,113 @@ public with sharing class SensorRestServiceHelperTest {
             Test.stopTest();
         }
     }
+    @isTest
+    static void testSepareteSensorsPositive() {
+        User user = TestDataFactory.createTestUser('Integration Profile');
+        Map<String, List<SObject>> returnedResults;
+        System.runAs(user) {
+            Map<String, Sensor__c> sensorsFromDatabase = TestDataFactory.getDuplicateSensorsMap(
+                201
+            );
+            Map<String, List<Sensor_Event__c>> createdTestOfEvents = TestDataFactory.createSensorsWithEvents(
+                4,
+                201
+            );
+            Test.startTest();
+            returnedResults = SensorRestServiceHelper.separateSensors(
+                sensorsFromDatabase,
+                createdTestOfEvents
+            );
+            Test.stopTest();
+        }
+        System.assert(
+            returnedResults.containsKey('sensorEventsToCrearte'),
+            'Test: testSepareteSensorsPositive() is failed'
+        );
+        System.assert(
+            returnedResults.containsKey('sensorsToCreate'),
+            'Test: testSepareteSensorsPositive() is failed'
+        );
+        System.assertEquals(
+            804,
+            returnedResults.get('sensorEventsToCrearte').size(),
+            'Test  testSepareteSensors() is Failed'
+        );
+        System.assertEquals(
+            201,
+            returnedResults.get('sensorsToCreate').size(),
+            'Test: testSepareteSensors() is Failed'
+        );
+        for (
+            Sensor_Event__c event : (List<Sensor_Event__c>) returnedResults.get(
+                'sensorEventsToCrearte'
+            )
+        ) {
+            System.assertEquals(
+                true,
+                event.Sensor__c != null,
+                'Test: testSepareteSensors() is failed'
+            );
+        }
+        for (
+            Sensor__c sensor : (List<Sensor__c>) returnedResults.get(
+                'sensorsToCreate'
+            )
+        ) {
+            System.assertEquals(
+                true,
+                sensor.Id == null,
+                'Test: testSepareteSensors() is failed'
+            );
+        }
+    }
+    @isTest
+    static void testSepareteSensorsNegative() {
+        User user = TestDataFactory.createTestUser('Integration Profile');
+        Map<String, List<SObject>> returnedResults;
+        System.runAs(user) {
+            Map<String, Sensor__c> sensorsFromDatabase = TestDataFactory.getDuplicateSensorsMap(
+                0
+            );
+            Map<String, List<Sensor_Event__c>> createdTestOfEvents = TestDataFactory.createSensorsWithEvents(
+                4,
+                201
+            );
+            Test.startTest();
+            returnedResults = SensorRestServiceHelper.separateSensors(
+                sensorsFromDatabase,
+                createdTestOfEvents
+            );
+            Test.stopTest();
+        }
+        System.assert(
+            returnedResults.containsKey('sensorEventsToCrearte'),
+            'Test: testSepareteSensorsPositive() is failed'
+        );
+        System.assert(
+            returnedResults.containsKey('sensorsToCreate'),
+            'Test: testSepareteSensorsPositive() is failed'
+        );
+        System.assertEquals(
+            0,
+            returnedResults.get('sensorEventsToCrearte').size(),
+            'Test  testSepareteSensors() is Failed'
+        );
+        System.assertEquals(
+            201,
+            returnedResults.get('sensorsToCreate').size(),
+            'Test: testSepareteSensors() is Failed'
+        );
+        for (
+            Sensor_Event__c event : (List<Sensor_Event__c>) returnedResults.get(
+                'sensorEventsToCrearte'
+            )
+        ) {
+            System.assertEquals(
+                true,
+                event.Sensor__c == null,
+                'Test: testSepareteSensors() is failed'
+            );
+        }
+    }
 }

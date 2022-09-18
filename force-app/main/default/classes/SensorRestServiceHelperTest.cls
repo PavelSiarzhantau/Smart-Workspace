@@ -57,4 +57,50 @@ public with sharing class SensorRestServiceHelperTest {
             Test.stopTest();
         }
     }
+    @isTest
+    static void testGetduplicateSensorsMapPositive() {
+        User user;
+        System.runAs(new User(Id = UserInfo.getUserId())) {
+            user = TestDataFactory.createTestUser('Integration Profile');
+        }
+        List<Sensor__c> listOfSensors = TestDataFactory.createListOfSensors(
+            201
+        );
+        Map<String, Sensor__c> expected = TestDataFactory.createMapOfSensors(
+            201,
+            false
+        );
+        Map<String, Sensor__c> actual;
+        System.runAs(user) {
+            Test.startTest();
+            actual = SensorRestServiceHelper.getduplicateSensorsMap(
+                listOfSensors
+            );
+            Test.stopTest();
+        }
+        for (Sensor__c sensor : expected.values()) {
+            System.assertEquals(
+                sensor,
+                actual.get(sensor.Name),
+                'Test: testGetduplicateSensorsMap() is failed'
+            );
+        }
+    }
+    @isTest
+    static void testGetduplicateSensorsMapNegative() {
+        User user = TestDataFactory.createTestUser('Integration Profile');
+        List<Sensor__c> listOfSensors = new List<Sensor__c>();
+        System.runAs(user) {
+            Test.startTest();
+            Map<String, Sensor__c> actual = SensorRestServiceHelper.getduplicateSensorsMap(
+                listOfSensors
+            );
+            System.assertEquals(
+                0,
+                actual.size(),
+                'Test: testGetduplicateSensorsMapNegative() is failed '
+            );
+            Test.stopTest();
+        }
+    }
 }

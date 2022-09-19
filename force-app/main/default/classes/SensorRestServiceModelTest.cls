@@ -1,3 +1,62 @@
 @isTest
 public with sharing class SensorRestServiceModelTest {
+    @isTest
+    static void testGetduplicateSensors() {
+        User user = TestDataFactory.createTestUser('Integration Profile');
+        List<Sensor__c> listofSensors;
+        Map<String, Sensor__c> mapOfSensorsWithEvents = new Map<String, Sensor__c>();
+        Set<String> setOfSensorsNames = new Set<String>();
+        List<Sensor__c> actualListOfSensors;
+        Map<Id, Sensor__c> mapOfSensorsFromDatabase;
+
+        System.runAs(user) {
+            mapOfSensorsWithEvents = TestDataFactory.createDuplicateRecords(
+                250,
+                2
+            );
+            System.debug(':::: ' + mapOfSensorsWithEvents);
+            for (Sensor__c sensor : mapOfSensorsWithEvents.values()) {
+                System.debug('name:::: ' + sensor.Name);
+                setOfSensorsNames.add(sensor.Name);
+            }
+            Test.startTest();
+            actualListOfSensors = SensorRestServiceModel.getduplicateSensors(
+                setOfSensorsNames
+            );
+            Test.stopTest();
+            mapOfSensorsFromDatabase = new Map<Id, Sensor__c>(
+                [
+                    SELECT
+                        Id,
+                        Name,
+                        (
+                            SELECT Id, Name
+                            FROM Sensor_Events__r
+                            ORDER BY Name DESC
+                            LIMIT 1
+                        )
+                    FROM Sensor__c
+                ]
+            );
+            System.assertEquals(
+                mapOfSensorsFromDatabase.size(),
+                actualListOfSensors.size(),
+                'Test: testGetduplicateSensors() is failed'
+            );
+            for (Sensor__c sensor : actualListOfSensors) {
+                System.assertEquals(
+                    true,
+                    mapOfSensorsFromDatabase.containsKey(sensor.Id),
+                    'Test: testGetduplicateSensors() is failed'
+                );
+                System.assertEquals(
+                    mapOfSensorsFromDatabase.get(sensor.Id)
+                        .Sensor_Events__r[0]
+                        .Id,
+                    sensor.Sensor_Events__r[0].Id,
+                    'Test: testGetduplicateSensors() is failed'
+                );
+            }
+        }
+    }
 }

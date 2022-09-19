@@ -97,6 +97,21 @@ public with sharing class TestDataFactory {
         }
         return mapOfSensors;
     }
+    public static List<Sensor__c> insertListOfSensors(
+        Integer countOfSensors,
+        Boolean ifInsert
+    ) {
+        List<Sensor__c> listOfSensorsToAdd = new List<Sensor__c>();
+        for (Integer i = 0; i < countOfSensors; i++) {
+            Sensor__c sensor = new Sensor__c(Name = 'sensor-' + i);
+            listOfSensorsToAdd.add(sensor);
+        }
+        if (ifInsert) {
+            insert listOfSensorsToAdd;
+        }
+
+        return listOfSensorsToAdd;
+    }
     public static List<Sensor_Event__c> createListofEvents(
         Integer countOfEvents
     ) {
@@ -156,5 +171,132 @@ public with sharing class TestDataFactory {
             );
         }
         return mapSensorsWithEvents;
+    }
+    public static Map<String, Sensor__c> createDuplicateRecords(
+        Integer countOfSensors,
+        Integer countOfEvents
+    ) {
+        // 1 create and insert Sensors with events in  database
+        Integer counter = 0;
+        List<Sensor__c> listOfSensors = insertListOfSensors(
+            countOfSensors,
+            true
+        );
+        List<Sensor_Event__c> listWithSensorsEventsToCreate = new List<Sensor_Event__c>();
+        for (Sensor__c sensor : listOfSensors) {
+            List<Sensor_Event__c> listOfEvents = createListofEvents(
+                countOfEvents
+            );
+            for (Sensor_Event__c event : listOfEvents) {
+                event.Sensor__c = sensor.Id;
+                listWithSensorsEventsToCreate.add(event);
+            }
+        }
+        insert listWithSensorsEventsToCreate;
+        List<Sensor__c> listofSensorsFromDatabase = [
+            SELECT Id, Name, (SELECT Id, Name FROM Sensor_Events__r)
+            FROM Sensor__c
+        ];
+        List<Sensor_Event__c> listToUpdateRelationshipsOnEvent = new List<Sensor_Event__c>();
+        for (Sensor__c sensor : listofSensorsFromDatabase) {
+            counter = 0;
+            for (Sensor_Event__c event : sensor.Sensor_Events__r) {
+                if (counter != 0) {
+                    event.Sensor_Event__c = sensor.Sensor_Events__r[counter - 1]
+                        .Id;
+                    listToUpdateRelationshipsOnEvent.add(event);
+                    counter++;
+                } else {
+                    counter++;
+                }
+            }
+        }
+        update listToUpdateRelationshipsOnEvent;
+        //2 Retrieve duplicate sensors from database
+        List<Sensor__c> listOfSensorFromDatabase = [
+            SELECT
+                Id,
+                Name,
+                (
+                    SELECT Id, Name
+                    FROM Sensor_Events__r
+                    ORDER BY Name DESC
+                    LIMIT 1
+                )
+            FROM Sensor__c
+            WHERE Id IN :listOfSensors
+            WITH SECURITY_ENFORCED
+        ];
+        //3 Return map of duplicate sensors
+        Map<String, Sensor__c> mapOfDuplicatedSensors = new Map<String, Sensor__c>();
+        for (Sensor__c sensor : listOfSensorFromDatabase) {
+            mapOfDuplicatedSensors.put(sensor.Name, sensor);
+        }
+        return mapOfDuplicatedSensors;
+    }
+    public static List<Sensor__c> getDataToTestUpdatingSensorsEvents(
+        Integer countOfSensors,
+        Integer countOfEvents
+    ) {
+        //1 Retrieve duplicate sensors from database
+        List<Sensor__c> listOfSensorsFromDatabase = [
+            SELECT Id, Name
+            FROM Sensor__c
+        ];
+        Set<String> setOfNameSensorsFromDatabase = new Set<String>();
+        //2 Create Sensors Events
+        List<Sensor_Event__c> listOfSensorsEventsToCreate = new List<Sensor_Event__c>();
+        for (Sensor__c sensor : listOfSensorsFromDatabase) {
+            setOfNameSensorsFromDatabase.add(sensor.Name);
+            List<Sensor_Event__c> listOfEvents = createListofEvents(
+                countOfEvents
+            );
+            for (Sensor_Event__c event : listOfEvents) {
+                event.Sensor__c = sensor.Id;
+                listOfSensorsEventsToCreate.add(event);
+            }
+        }
+        List<Sensor__c> listOfSensorsToCreatewithOutDuplicateNames = createListOfSensors(
+            countOfSensors
+        );
+        Set<String> setOfNameSensorsToCreatewithOutDuplicateNames = new Set<String>();
+        for (Sensor__c sensor : listOfSensorsToCreatewithOutDuplicateNames) {
+            setOfNameSensorsToCreatewithOutDuplicateNames.add(sensor.Name);
+        }
+        insert listOfSensorsToCreatewithOutDuplicateNames;
+        for (Sensor__c sensor : [
+            SELECT Id, Name
+            FROM Sensor__c
+            WHERE Name IN :setOfNameSensorsToCreatewithOutDuplicateNames
+        ]) {
+            List<Sensor_Event__c> listOfEvents = createListofEvents(
+                countOfEvents
+            );
+            for (Sensor_Event__c event : listOfEvents) {
+                event.Sensor__c = sensor.Id;
+                listOfSensorsEventsToCreate.add(event);
+            }
+        }
+        insert listOfSensorsEventsToCreate;
+        Set<String> setOfNamesOfSensorsToCreate = new Set<String>();
+        setOfNamesOfSensorsToCreate.addAll(setOfNameSensorsFromDatabase);
+        setOfNamesOfSensorsToCreate.addAll(
+            setOfNameSensorsToCreatewithOutDuplicateNames
+        );
+        List<Sensor__c> listOfSensorsToReturn = [
+            SELECT
+                Id,
+                Name,
+                (
+                    SELECT Id, Name, Sensor_Event__c, Sensor__r.Name
+                    FROM Sensor_Events__r
+                    WHERE Id IN :listOfSensorsEventsToCreate
+                    ORDER BY Name ASC
+                )
+            FROM Sensor__c
+            WHERE Name IN :setOfNamesOfSensorsToCreate
+            WITH SECURITY_ENFORCED
+        ];
+        return listOfSensorsToReturn;
     }
 }

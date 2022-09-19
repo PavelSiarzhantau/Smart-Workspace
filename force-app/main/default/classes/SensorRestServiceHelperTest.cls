@@ -245,4 +245,67 @@ public with sharing class SensorRestServiceHelperTest {
             );
         }
     }
+    @isTest
+    static void testprepareSensorsEventsToUpdate() {
+        User user = TestDataFactory.createTestUser('Integration Profile');
+        List<Sensor_Event__c> actual;
+        Map<String, Sensor__c> duplicateSensors;
+        List<Sensor__c> sensorsWithEvents;
+        List<Sensor__c> sensorsFromDatabase;
+        Integer counter = 0;
+        Integer counter2 = 0;
+        System.runAs(user) {
+            duplicateSensors = TestDataFactory.createDuplicateRecords(1, 2);
+            sensorsWithEvents = TestDataFactory.getDataToTestUpdatingSensorsEvents(
+                5,
+                2
+            );
+            Test.startTest();
+            actual = SensorRestServiceHelper.prepareSensorsEventsToUpdate(
+                sensorsWithEvents,
+                duplicateSensors
+            );
+            Test.stopTest();
+            update actual;
+            System.debug('SIZE:::: ' + actual.size());
+            for (Sensor_Event__c event : actual) {
+                if (event.Sensor_Event__c == null) {
+                    counter++;
+                }
+            }
+            sensorsFromDatabase = [
+                SELECT
+                    Id,
+                    Name,
+                    (
+                        SELECT Id, Name, Sensor_Event__r.Id
+                        FROM Sensor_Events__r
+                        ORDER BY Name ASC
+                    )
+                FROM Sensor__c
+            ];
+            for (Sensor__c sensor : sensorsFromDatabase) {
+                counter2 = 0;
+                for (Sensor_Event__c event : sensor.Sensor_Events__r) {
+                    System.debug('event:::: ' + event);
+                    if (counter2 != 0) {
+                        System.assertEquals(
+                            true,
+                            event.Sensor_Event__c ==
+                            sensor.Sensor_Events__r[counter2 - 1].Id,
+                            'Test: testprepareSensorsEventsToUpdate() is failed'
+                        );
+                        counter2++;
+                    } else {
+                        counter2++;
+                    }
+                }
+            }
+            System.assertEquals(
+                5,
+                counter,
+                'Test: testprepareSensorsEventsToUpdate() is failed'
+            );
+        }
+    }
 }

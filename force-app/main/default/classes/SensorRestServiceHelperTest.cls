@@ -212,4 +212,37 @@ public with sharing class SensorRestServiceHelperTest {
             );
         }
     }
+    @isTest
+    static void testAssignSensorToSensorEvent() {
+        User user = TestDataFactory.createTestUser('Integration Profile');
+        List<Sensor__c> listofSensorsFromDatabase;
+        Map<String, List<Sensor_Event__c>> sensorsWithEvents;
+        List<Sensor_Event__c> sensorEventsToCrearte;
+
+        System.runAs(user) {
+            listofSensorsFromDatabase = TestDataFactory.insertListOfSensors(
+                201,
+                true
+            );
+            sensorsWithEvents = TestDataFactory.createSensorsWithEvents(4, 201);
+            Test.startTest();
+            sensorEventsToCrearte = SensorRestServiceHelper.assignSensorToSensorEvent(
+                listofSensorsFromDatabase,
+                sensorsWithEvents
+            );
+            Test.stopTest();
+        }
+        System.assertEquals(
+            804,
+            sensorEventsToCrearte.size(),
+            'Test: testAssignSensorToSensorEvent() is faliled'
+        );
+        for (Sensor_Event__c event : sensorEventsToCrearte) {
+            System.assertEquals(
+                true,
+                event.Sensor__c != null,
+                'Test: testAssignSensorToSensorEvent() is faliled'
+            );
+        }
+    }
 }

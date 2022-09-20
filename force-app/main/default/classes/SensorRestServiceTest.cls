@@ -130,4 +130,28 @@ public with sharing class SensorRestServiceTest {
             Test.stopTest();
         }
     }
+    @isTest
+    static void testExceptionSensorsEventsUpdate() {
+        User user = TestDataFactory.createTestUser('Integration Profile');
+        RestRequest request = TestDataFactory.createMockRequest(true);
+        SensorRestService.SensorWrapper requestToUser = new SensorRestService.SensorWrapper();
+        RestContext.request = request;
+        SensorRestService.throwExceptionSensorsEventsUpdate = true;
+        String message = 'Test Error';
+        Integer statusCode = 500;
+        Boolean isError = true;
+        System.runAs(user) {
+            Test.startTest();
+            try {
+                requestToUser = SensorRestService.createOrUpdateSensorWithEvents();
+            } catch (SensorRestService.SensorException e) {
+                System.assertEquals(
+                    message,
+                    e.getMessage(),
+                    'Test: createSensorPositive() is failed'
+                );
+            }
+            Test.stopTest();
+        }
+    }
 }

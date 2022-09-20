@@ -41,4 +41,45 @@ public with sharing class SensorRestServiceTest {
             'Test: createSensorPositive() is failed'
         );
     }
+    @isTest
+    static void testCreateOrUpdateSensorrNegativeWrongInput() {
+        User user = TestDataFactory.createTestUser('Integration Profile');
+        RestRequest request = TestDataFactory.createMockRequest(false);
+        RestContext.request = request;
+        String message = '::::INVALID INPUT::::, Please enter valid string';
+        Integer statusCode = 500;
+        Boolean isError = true;
+        SensorRestService.SensorWrapper requestToUser = new SensorRestService.SensorWrapper();
+        List<Sensor__c> listOfSensors = new List<Sensor__c>();
+        System.runAs(user) {
+            Test.startTest();
+            requestToUser = SensorRestService.createOrUpdateSensorWithEvents();
+            Test.stopTest();
+        }
+        System.debug('request:::: ' + requestToUser);
+        listOfSensors = [
+            SELECT Id, Name, (SELECT Id, Name FROM Sensor_Events__r)
+            FROM Sensor__c
+        ];
+        System.AssertEquals(
+            listOfSensors.size(),
+            requestToUser.createdAndUpdatedSensors.size(),
+            'Test: createSensorPositive() is failed'
+        );
+        System.assertEquals(
+            message,
+            requestToUser.errorMessage,
+            'Test: createSensorPositive() is failed'
+        );
+        System.assertEquals(
+            statusCode,
+            requestToUser.statusCode,
+            'Test: createSensorPositive() is failed'
+        );
+        System.assertEquals(
+            isError,
+            requestToUser.isError,
+            'Test: createSensorPositive() is failed'
+        );
+    }
 }

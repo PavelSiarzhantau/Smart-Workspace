@@ -5,7 +5,7 @@
     "**/.sfdx": true
   },
   "editor.formatOnSave": false,
-  "editor.formatOnType": true,
+  "editor.formatOnType": false,
   "salesforcedx-vscode-apex.enable-semantic-errors": false,
   "editor.insertSpaces": true,
   "editor.detectIndentation": true,

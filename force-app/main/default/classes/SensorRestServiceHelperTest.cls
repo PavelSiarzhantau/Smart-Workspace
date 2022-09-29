@@ -4,11 +4,12 @@ public with sharing class SensorRestServiceHelperTest {
     static void testGetParametersFromRequestPositive() {
         User user = TestDataFactory.createTestUser('Integration Profile');
         RestRequest request = TestDataFactory.createMockRequest(true);
+        System.debug('request:::: ' + request.requestBody.toString());
         Map<String, List<Sensor_Event__c>> expexted = TestDataFactory.createMapWithSensorsAndEvents();
         Map<String, List<Sensor_Event__c>> actual;
         Sensor_Event__c actualEvent;
         Integer count = 0;
-        RestContext.request = request;
+        // RestContext.request = request;
         System.runAs(user) {
             Test.startTest();
             actual = SensorRestServiceHelper.getParametersFromRequest(request);
@@ -23,7 +24,6 @@ public with sharing class SensorRestServiceHelperTest {
             for (Sensor_Event__c event : expexted.get(sensor)) {
                 actualEvent = new Sensor_Event__c();
                 actualEvent = actual.get(sensor)[count];
-                System.debug('EVENT ' + event + ' ACTUAL ' + actualEvent);
                 System.assertEquals(
                     event,
                     actualEvent,
@@ -51,11 +51,44 @@ public with sharing class SensorRestServiceHelperTest {
                 System.assertEquals(
                     expectedMessage,
                     actualMessage,
-                    'Test: testGetParametersFromRequestNegative() method is failed message don\'t meet'
+                    'Test: testGetParametersFromRequestNegative() method is failed'
                 );
             }
             Test.stopTest();
         }
+    }
+    @isTest
+    static void testGetParametersFromRequestOnlySensors() {
+        User user = TestDataFactory.createTestUser('Integration Profile');
+        RestRequest request = new RestRequest();
+        request.requestBody = Blob.valueOf('\'{‘sensorid’: \'1\'}\'');
+        request.requestUri = 'https://yourInstance.my.salesforce.com/services/apexrest/Sensors/';
+        request.httpMethod = 'POST';
+        List<Sensor__c> sensorsFromDatabase;
+        Map<String, List<Sensor_Event__c>> expexted = TestDataFactory.createMapWithSensorsAndEvents();
+        Map<String, List<Sensor_Event__c>> actual;
+        Test.startTest();
+        actual = SensorRestServiceHelper.getParametersFromRequest(request);
+        Test.stopTest();
+        System.assert(
+            actual.size() != 0,
+            'Test: actual returned list is Empty'
+        );
+        System.assertEquals(
+            true,
+            actual.get('1').size() == 0,
+            'Test: testGetParametersFromRequestOnlySensors() method is failed'
+        );
+        System.assertEquals(
+            expexted.keySet(),
+            actual.keySet(),
+            'Test: testGetParametersFromRequestOnlySensors() method is failed'
+        );
+        System.assertNotEquals(
+            expexted.values(),
+            actual.values(),
+            'Test: testGetParametersFromRequestOnlySensors() method is failed'
+        );
     }
     @isTest
     static void testGetduplicateSensorsMapPositive() {

@@ -14,9 +14,7 @@ public with sharing class SensorRestServiceModelTest {
                 250,
                 2
             );
-            System.debug(':::: ' + mapOfSensorsWithEvents);
             for (Sensor__c sensor : mapOfSensorsWithEvents.values()) {
-                System.debug('name:::: ' + sensor.Name);
                 setOfSensorsNames.add(sensor.Name);
             }
             Test.startTest();

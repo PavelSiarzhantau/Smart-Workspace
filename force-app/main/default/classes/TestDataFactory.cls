@@ -8,11 +8,15 @@ public with sharing class TestDataFactory {
         request.httpMethod = 'POST';
         if (isPositive) {
             request.requestBody = Blob.valueOf(
-                '\'{‘sensorid’: \'1\',‘vectors’: [{‘x’: 22,’y’: 17,’z’: 197}, {‘x’: 23, ‘y’: 45,’z’: 14}, { ‘x’: 22, ‘y’: 43,’z’: 196}, {‘x’: 24,‘y’: 42,‘z’: 198} ] }\''
+                '\'{‘sensorid’: \'1\', ‘vectors’: [{‘x’: 22,’y’: 17,’z’: 197},' +
+                '{‘x’: 23, ‘y’: 45,’z’: 14}, { ‘x’: 22, ‘y’: 43,’z’: 196},' +
+                '{‘x’: 24,‘y’: 42,‘z’: 198} ] }\''
             );
         } else {
             request.requestBody = Blob.valueOf(
-                '\'{‘sensorid’: \'1\',‘vectors’: [‘x: 22,’y’: 17,’z’: 197}, {x’: 23, ‘y’: 45,’z’: 14}, { ‘x’: 22, ‘y’: 43,’z’: 196}, x’: 24,‘y’: 42,‘z’: 198} ] }\''
+                '\'{‘sensorid’: \'1\',‘vectors’: [‘x: 22,’y’: 17,’z’: 197},' +
+                '{x’: 23, ‘y’: 45,’z’: 14}, { ‘x’: 22, ‘y’: 43,’z’: 196},' +
+                'x’: 24,‘y’: 42,‘z’: 198} ] }\''
             );
         }
         return request;

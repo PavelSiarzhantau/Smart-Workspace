@@ -1,0 +1,7 @@
+.data-table-container {
+  display: flex;
+  max-height: 400px;
+}
+.data-table {
+  width: 100%;
+}

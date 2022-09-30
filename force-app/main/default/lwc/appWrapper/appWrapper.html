@@ -1,0 +1,33 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <lightning-layout>
+        <lightning-layout-item
+            size="4"
+            padding="around-small"
+            flexibility="auto"
+        >
+            <c-sensors
+                onselected={handleSelectedSensor}
+                show-sensors={showSensors}
+                hide-sensor-spinner={hideSensorSpinner}
+                preselect={preSelectedRow}
+                sensors={sensors}
+            ></c-sensors>
+        </lightning-layout-item>
+        <lightning-layout-item
+            size="8"
+            padding="around-small"
+            flexibility="auto"
+        >
+            <c-sensors-events
+                selected-sensor={selectedSensor}
+                show-sensor-events={showSensorEvents}
+                hide-event-spinner={hideEventSpinner}
+                onupdated={handleUpdatedEvent}
+                events={events}
+                sensor-name={sensorName}
+                max-vector-length={maxVectorLength}
+            ></c-sensors-events>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>

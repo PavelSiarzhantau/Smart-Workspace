@@ -1,0 +1,9 @@
+<!-- boundary.html -->
+<template>
+    <template if:true={error}>
+        <c-error-panel errors={error}></c-error-panel>
+    </template>
+    <template if:false={error}>
+        <c-app-wrapper></c-app-wrapper>
+    </template>
+</template>

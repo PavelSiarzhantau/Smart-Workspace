@@ -1,0 +1,34 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <lightning-card title="Sensors" icon-name="standard:activations">
+        <div if:false={hideSensorSpinner} class="slds-is-relative">
+            <lightning-spinner alternative-text="Loading..." variant="brand">
+            </lightning-spinner>
+        </div>
+        <div if:true={hideSensorSpinner}>
+            <div
+                class="slds-p-horizontal_small slds-m-bottom_medium"
+                if:true={showSensors}
+            >
+                <div class="data-table-container">
+                    <lightning-datatable
+                        class="data-table"
+                        key-field="Id"
+                        data={sensors}
+                        columns={columns}
+                        max-row-selection="1"
+                        onrowselection={getSelectedRows}
+                        selected-rows={preselect}
+                    >
+                    </lightning-datatable>
+                </div>
+            </div>
+            <div
+                class="slds-p-horizontal_small slds-m-bottom_medium"
+                if:false={showSensors}
+            >
+                Please create Sensors.
+            </div>
+        </div>
+    </lightning-card>
+</template>

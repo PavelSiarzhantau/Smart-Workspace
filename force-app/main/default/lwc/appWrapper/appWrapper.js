@@ -132,11 +132,6 @@ export default class AppWrapper extends LightningElement {
   handleUpdatedEvent() {
     refreshApex(this._wiredDataEvents);
   }
-  //send sensors in sensors element
-  sendSensors(sensors) {
-    const elem = this.template.querySelector("c-sensors");
-    elem.enterSensorsToDataTable(sensors);
-  }
   //send events in sensorsEvents element
   sendEvents(events) {
     const elem = this.template.querySelector("c-sensors-events");

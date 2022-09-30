@@ -1,11 +1,7 @@
 <!-- sldsValidatorIgnore -->
 <template>
     <lightning-layout>
-        <lightning-layout-item
-            size="4"
-            padding="around-small"
-            flexibility="auto"
-        >
+        <lightning-layout-item size="4" padding="around-small" flexibility="auto">
             <c-sensors
                 onselected={handleSelectedSensor}
                 show-sensors={showSensors}
@@ -14,11 +10,7 @@
                 sensors={sensors}
             ></c-sensors>
         </lightning-layout-item>
-        <lightning-layout-item
-            size="8"
-            padding="around-small"
-            flexibility="auto"
-        >
+        <lightning-layout-item size="8" padding="around-small" flexibility="auto">
             <c-sensors-events
                 selected-sensor={selectedSensor}
                 show-sensor-events={showSensorEvents}

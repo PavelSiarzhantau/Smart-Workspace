@@ -1,3 +1,13 @@
+/** 
+*
+*   Class Name   : TestDataFactory
+*   Author Email : pavel.siarzhantau@gmail.com 
+*   Purpose      : primary purpose - suggest different data construction to test 
+                   logic across all classes in Org
+*   Revisions    : 30/09/2022 - Original
+*      
+*
+**/
 @isTest
 public with sharing class TestDataFactory {
     public static RestRequest createMockRequest(Boolean isPositive) {
@@ -14,8 +24,8 @@ public with sharing class TestDataFactory {
             );
         } else {
             request.requestBody = Blob.valueOf(
-                '\'{‘sensorid’: \'1\',‘vectors’: [‘x: 22,’y’: 17,’z’: 197},' +
-                '{x’: 23, ‘y’: 45,’z’: 14}, { ‘x’: 22, ‘y’: 43,’z’: 196},' +
+                '\'{‘sensorid’: \'1\',‘vectors’: [‘x: 22,’y’: 17,’z’: 197},'+
+                '{x’: 23, ‘y’: 45,’z’: 14}, { ‘x’: 22, ‘y’: 43,’z’: 196},'+ 
                 'x’: 24,‘y’: 42,‘z’: 198} ] }\''
             );
         }
@@ -54,7 +64,9 @@ public with sharing class TestDataFactory {
     }
     public static User createTestUser(String profile) {
         User user = new User(
-            ProfileId = [SELECT Id FROM Profile WHERE Name = :profile]
+            ProfileId = [SELECT Id 
+                         FROM Profile 
+                         WHERE Name = :profile]
             .Id,
             LastName = 'last',
             Email = 'Cpt.Awesome@awesomesauce.com',
@@ -70,11 +82,10 @@ public with sharing class TestDataFactory {
         insert user;
         insert new PermissionSetAssignment(
             AssigneeId = user.Id,
-            PermissionSetId = [
-                SELECT Id
-                FROM PermissionSet
-                WHERE Name = 'Access_to_Sensor_and_sensor_events_access'
-            ][0]
+            PermissionSetId = [SELECT Id
+                               FROM PermissionSet
+                               WHERE Name = 'Access_to_Sensor_and_sensor_events_access']
+            [0]
             .Id
         );
         return user;
@@ -159,7 +170,8 @@ public with sharing class TestDataFactory {
             setOfNamesOfSensorsFromDatabase.add(sensor.Name);
         }
         List<Sensor__c> listOfSensorsFromDatabase = [
-            SELECT Id, Name
+            SELECT Id, 
+                   Name
             FROM Sensor__c
             WHERE Name IN :setOfNamesOfSensorsFromDatabase
         ];
@@ -198,7 +210,11 @@ public with sharing class TestDataFactory {
         }
         insert listWithSensorsEventsToCreate;
         List<Sensor__c> listofSensorsFromDatabase = [
-            SELECT Id, Name, (SELECT Id, Name FROM Sensor_Events__r)
+            SELECT Id, 
+                   Name, 
+                   (SELECT Id, 
+                           Name 
+                           FROM Sensor_Events__r)
             FROM Sensor__c
         ];
         List<Sensor_Event__c> listToUpdateRelationshipsOnEvent = new List<Sensor_Event__c>();
@@ -218,11 +234,10 @@ public with sharing class TestDataFactory {
         update listToUpdateRelationshipsOnEvent;
         //2 Retrieve duplicate sensors from database
         List<Sensor__c> listOfSensorFromDatabase = [
-            SELECT
-                Id,
-                Name,
-                (
-                    SELECT Id, Name
+            SELECT Id,
+                   Name,
+                   (SELECT Id, 
+                           Name
                     FROM Sensor_Events__r
                     ORDER BY Name DESC
                     LIMIT 1
@@ -244,7 +259,8 @@ public with sharing class TestDataFactory {
     ) {
         //1 Retrieve duplicate sensors from database
         List<Sensor__c> listOfSensorsFromDatabase = [
-            SELECT Id, Name
+            SELECT Id, 
+                   Name
             FROM Sensor__c
         ];
         Set<String> setOfNameSensorsFromDatabase = new Set<String>();
@@ -269,7 +285,8 @@ public with sharing class TestDataFactory {
         }
         insert listOfSensorsToCreatewithOutDuplicateNames;
         for (Sensor__c sensor : [
-            SELECT Id, Name
+            SELECT Id, 
+                   Name
             FROM Sensor__c
             WHERE Name IN :setOfNameSensorsToCreatewithOutDuplicateNames
         ]) {
@@ -291,11 +308,13 @@ public with sharing class TestDataFactory {
             SELECT
                 Id,
                 Name,
-                (
-                    SELECT Id, Name, Sensor_Event__c, Sensor__r.Name
-                    FROM Sensor_Events__r
-                    WHERE Id IN :listOfSensorsEventsToCreate
-                    ORDER BY Name ASC
+                (SELECT Id, 
+                        Name, 
+                        Sensor_Event__c, 
+                        Sensor__r.Name
+                 FROM Sensor_Events__r
+                 WHERE Id IN :listOfSensorsEventsToCreate
+                 ORDER BY Name ASC
                 )
             FROM Sensor__c
             WHERE Name IN :setOfNamesOfSensorsToCreate

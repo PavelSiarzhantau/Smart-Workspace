@@ -1,3 +1,13 @@
+/** 
+*
+*   Class Name   : SensorRestServiceModelTest
+*   Author Email : pavel.siarzhantau@gmail.com 
+*   Purpose      : primary purpose - test all methods with different scenarious in 
+                   SensorRestServiceModel class
+*   Revisions    : 30/09/2022 - Original
+*      
+*
+**/
 @isTest
 public with sharing class SensorRestServiceModelTest {
     @isTest
@@ -10,10 +20,7 @@ public with sharing class SensorRestServiceModelTest {
         Map<Id, Sensor__c> mapOfSensorsFromDatabase;
 
         System.runAs(user) {
-            mapOfSensorsWithEvents = TestDataFactory.createDuplicateRecords(
-                250,
-                2
-            );
+            mapOfSensorsWithEvents = TestDataFactory.createDuplicateRecords(250,2);
             for (Sensor__c sensor : mapOfSensorsWithEvents.values()) {
                 setOfSensorsNames.add(sensor.Name);
             }
@@ -24,11 +31,10 @@ public with sharing class SensorRestServiceModelTest {
             Test.stopTest();
             mapOfSensorsFromDatabase = new Map<Id, Sensor__c>(
                 [
-                    SELECT
-                        Id,
-                        Name,
-                        (
-                            SELECT Id, Name
+                    SELECT Id,
+                           Name,
+                           (SELECT Id,
+                                   Name
                             FROM Sensor_Events__r
                             ORDER BY Name DESC
                             LIMIT 1
@@ -67,15 +73,15 @@ public with sharing class SensorRestServiceModelTest {
         List<Sensor__c> actualListOfSensors;
         Map<Id, Sensor__c> mapOfSensorsFromDatabase;
         System.runAs(user) {
-            mapOfSensorsWithEvents = TestDataFactory.createDuplicateRecords(
-                250,
-                3
-            );
+            mapOfSensorsWithEvents = TestDataFactory.createDuplicateRecords(250,3);
             for (Sensor__c sensor : mapOfSensorsWithEvents.values()) {
                 setOfNames.add(sensor.Name);
             }
             listofSensorseventsFromDatabase = [
-                SELECT Id, Name, Sensor_Event__c, Sensor__r.Name
+                SELECT Id, 
+                       Name, 
+                       Sensor_Event__c, 
+                       Sensor__r.Name
                 FROM Sensor_Event__c
             ];
             for (Sensor_Event__c event : listofSensorseventsFromDatabase) {
@@ -89,11 +95,12 @@ public with sharing class SensorRestServiceModelTest {
             Test.stopTest();
             mapOfSensorsFromDatabase = new Map<Id, Sensor__c>(
                 [
-                    SELECT
-                        Id,
-                        Name,
-                        (
-                            SELECT Id, Name, Sensor_Event__c, Sensor__r.Name
+                    SELECT Id,
+                           Name,
+                           (SELECT Id, 
+                                   Name, 
+                                   Sensor_Event__c, 
+                                   Sensor__r.Name
                             FROM Sensor_Events__r
                             ORDER BY Name ASC
                         )

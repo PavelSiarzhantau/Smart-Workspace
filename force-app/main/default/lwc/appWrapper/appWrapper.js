@@ -27,7 +27,6 @@ export default class AppWrapper extends LightningElement {
   connectedCallback() {
     try {
       //register error listener
-      console.log("connectedCallback is fired on appWrapper");
       this.registerErrorListener();
       //subcribe to channel
       this.handleSubscribe();
@@ -50,7 +49,7 @@ export default class AppWrapper extends LightningElement {
         this.ShowToastEvent(error.name(), error.message(), "error", "pester");
       });
   }
-  //sensors
+  //get sensors from database 
   @wire(getSensorsRecords)
   getSensors(result) {
     this._wiredData = result;
@@ -112,6 +111,7 @@ export default class AppWrapper extends LightningElement {
       );
     }
   }
+  //prepare custom view of sensors within data-table
   prepareSensorsData(sensors) {
     return sensors.map((elem) => {
       return {

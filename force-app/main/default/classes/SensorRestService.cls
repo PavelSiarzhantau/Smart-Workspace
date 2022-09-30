@@ -1,3 +1,15 @@
+/** 
+*
+*   Class Name   : SensorRestService
+*   Author Email : pavel.siarzhantau@gmail.com 
+*   Purpose      : primary purpose - handle request from external apllication, 
+                   and perform logic to save or update sensors and sensor events,
+                   current api rest service is able to obtain single string, or list of
+                   strings in the body of POST request.
+*   Revisions    : 30/09/2022 - Original
+*      
+*
+**/
 @RestResource(urlMapping='/Sensors/*')
 global with sharing class SensorRestService {
     @TestVisible
@@ -10,7 +22,7 @@ global with sharing class SensorRestService {
     global static final String TEST_EXCEPTION_MESSAGE = 'Test Error';
     global with sharing class SensorWrapper {
         global SensorWrapper() {
-            System.debug('init constructor');
+            System.debug('::::Init constructor:::');
         }
         global SensorWrapper(Boolean isError, String message) {
             this.createdAndUpdatedSensors = new List<Sensor__c>();

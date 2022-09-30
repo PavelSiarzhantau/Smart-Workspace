@@ -1,3 +1,12 @@
+/** 
+*
+*   Class Name   : SensorRestServiceModel
+*   Author Email : pavel.siarzhantau@gmail.com 
+*   Purpose      : primary purpose - accumulate methods which call database and return records
+*   Revisions    : 30/09/2022 - Original
+*      
+*
+**/
 public with sharing class SensorRestServiceModel {
     public static List<Sensor__c> getduplicateSensors(Set<String> sensorNamesFromRequest) {
         return [

@@ -1,3 +1,13 @@
+/** 
+*
+*   Class Name   : SensorRestServiceHelperTest
+*   Author Email : pavel.siarzhantau@gmail.com 
+*   Purpose      : primary purpose - test all methods with different scenarios
+                   in SensorRestServiceHelper class
+*   Revisions    : 30/09/2022 - Original
+*      
+*
+**/
 @isTest
 public with sharing class SensorRestServiceHelperTest {
     @isTest
@@ -96,13 +106,8 @@ public with sharing class SensorRestServiceHelperTest {
         System.runAs(new User(Id = UserInfo.getUserId())) {
             user = TestDataFactory.createTestUser('Integration Profile');
         }
-        List<Sensor__c> listOfSensors = TestDataFactory.createListOfSensors(
-            201
-        );
-        Map<String, Sensor__c> expected = TestDataFactory.createMapOfSensors(
-            201,
-            false
-        );
+        List<Sensor__c> listOfSensors = TestDataFactory.createListOfSensors(201);
+        Map<String, Sensor__c> expected = TestDataFactory.createMapOfSensors(201,false);
         Map<String, Sensor__c> actual;
         System.runAs(user) {
             Test.startTest();
@@ -141,13 +146,8 @@ public with sharing class SensorRestServiceHelperTest {
         User user = TestDataFactory.createTestUser('Integration Profile');
         Map<String, List<SObject>> returnedResults;
         System.runAs(user) {
-            Map<String, Sensor__c> sensorsFromDatabase = TestDataFactory.getDuplicateSensorsMap(
-                201
-            );
-            Map<String, List<Sensor_Event__c>> createdTestOfEvents = TestDataFactory.createSensorsWithEvents(
-                4,
-                201
-            );
+            Map<String, Sensor__c> sensorsFromDatabase = TestDataFactory.getDuplicateSensorsMap(201);
+            Map<String, List<Sensor_Event__c>> createdTestOfEvents = TestDataFactory.createSensorsWithEvents(4,201);
             Test.startTest();
             returnedResults = SensorRestServiceHelper.separateSensors(
                 sensorsFromDatabase,
@@ -201,9 +201,7 @@ public with sharing class SensorRestServiceHelperTest {
         User user = TestDataFactory.createTestUser('Integration Profile');
         Map<String, List<SObject>> returnedResults;
         System.runAs(user) {
-            Map<String, Sensor__c> sensorsFromDatabase = TestDataFactory.getDuplicateSensorsMap(
-                0
-            );
+            Map<String, Sensor__c> sensorsFromDatabase = TestDataFactory.getDuplicateSensorsMap(0);
             Map<String, List<Sensor_Event__c>> createdTestOfEvents = TestDataFactory.createSensorsWithEvents(
                 4,
                 201
@@ -253,10 +251,7 @@ public with sharing class SensorRestServiceHelperTest {
         List<Sensor_Event__c> sensorEventsToCrearte;
 
         System.runAs(user) {
-            listofSensorsFromDatabase = TestDataFactory.insertListOfSensors(
-                201,
-                true
-            );
+            listofSensorsFromDatabase = TestDataFactory.insertListOfSensors(201,true);
             sensorsWithEvents = TestDataFactory.createSensorsWithEvents(4, 201);
             Test.startTest();
             sensorEventsToCrearte = SensorRestServiceHelper.assignSensorToSensorEvent(
@@ -289,10 +284,7 @@ public with sharing class SensorRestServiceHelperTest {
         Integer counter2 = 0;
         System.runAs(user) {
             duplicateSensors = TestDataFactory.createDuplicateRecords(1, 2);
-            sensorsWithEvents = TestDataFactory.getDataToTestUpdatingSensorsEvents(
-                5,
-                2
-            );
+            sensorsWithEvents = TestDataFactory.getDataToTestUpdatingSensorsEvents(5,2);
             Test.startTest();
             actual = SensorRestServiceHelper.prepareSensorsEventsToUpdate(
                 sensorsWithEvents,
@@ -307,11 +299,11 @@ public with sharing class SensorRestServiceHelperTest {
                 }
             }
             sensorsFromDatabase = [
-                SELECT
-                    Id,
-                    Name,
-                    (
-                        SELECT Id, Name, Sensor_Event__r.Id
+                SELECT Id,
+                       Name,
+                       (SELECT Id, 
+                               Name, 
+                               Sensor_Event__r.Id
                         FROM Sensor_Events__r
                         ORDER BY Name ASC
                     )

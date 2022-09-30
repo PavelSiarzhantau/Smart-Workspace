@@ -1,3 +1,12 @@
+/** 
+*
+*   Class Name   : SensorEventsControllerTest
+*   Author Email : pavel.siarzhantau@gmail.com 
+*   Purpose      : primary purpose - test SensorEventsController class woth different scenario
+*   Revisions    : 30/09/2022 - Original
+*      
+*
+**/
 @isTest
 public with sharing class SensorEventsControllerTest {
     @isTest
@@ -8,27 +17,21 @@ public with sharing class SensorEventsControllerTest {
         List<Sensor_Event__c> actualListOfSensorsEvents = new List<Sensor_Event__c>();
         String recordId;
         System.runAs(user) {
-            mapOfSensorsWithEvents = TestDataFactory.createDuplicateRecords(
-                1,
-                30
-            );
+            mapOfSensorsWithEvents = TestDataFactory.createDuplicateRecords(1, 30);
             recordId = mapOfSensorsWithEvents.values()[0].Id;
             Test.startTest();
-            actualListOfSensorsEvents = SensorEvenstController.getSensorsEventsRecords(
-                recordId
-            );
+            actualListOfSensorsEvents = SensorEvenstController.getSensorsEventsRecords(recordId);
             Test.stopTest();
             listofSensorseventsFromDatabase = [
-                SELECT
-                    Name,
-                    Modulus_Vector_Length__c,
-                    x__c,
-                    y__c,
-                    z__c,
-                    Sensor__r.Max_Vectors_Length__c,
-                    Sensor_Event__r.Name,
-                    Sensor__r.Name,
-                    CreatedDate
+                SELECT Name,
+                       Modulus_Vector_Length__c,
+                       x__c,
+                       y__c,
+                       z__c,
+                       Sensor__r.Max_Vectors_Length__c,
+                       Sensor_Event__r.Name,
+                       Sensor__r.Name,
+                       CreatedDate
                 FROM Sensor_Event__c
             ];
             System.assertEquals(

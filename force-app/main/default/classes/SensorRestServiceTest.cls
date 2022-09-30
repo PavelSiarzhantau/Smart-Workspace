@@ -1,3 +1,13 @@
+/** 
+*
+*   Class Name   : SensorRestServiceTest
+*   Author Email : pavel.siarzhantau@gmail.com 
+*   Purpose      : primary purpose - test all methods with different scenarious in 
+                   SensorRestService class
+*   Revisions    : 30/09/2022 - Original
+*      
+*
+**/
 @isTest
 public with sharing class SensorRestServiceTest {
     @isTest
@@ -17,7 +27,11 @@ public with sharing class SensorRestServiceTest {
         }
         System.debug('request:::: ' + requestToUser);
         listOfSensors = [
-            SELECT Id, Name, (SELECT Id, Name FROM Sensor_Events__r)
+            SELECT Id, 
+                   Name, 
+                   (SELECT Id, 
+                           Name 
+                    FROM Sensor_Events__r)
             FROM Sensor__c
         ];
         System.assertEquals(
@@ -58,7 +72,11 @@ public with sharing class SensorRestServiceTest {
         }
         System.debug('request:::: ' + requestToUser);
         listOfSensors = [
-            SELECT Id, Name, (SELECT Id, Name FROM Sensor_Events__r)
+            SELECT Id, 
+                   Name, 
+                   (SELECT Id, 
+                           Name 
+                    FROM Sensor_Events__r)
             FROM Sensor__c
         ];
         System.AssertEquals(

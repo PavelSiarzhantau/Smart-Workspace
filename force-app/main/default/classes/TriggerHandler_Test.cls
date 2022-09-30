@@ -1,3 +1,13 @@
+/** 
+*
+*   Class Name   : TriggerHandler_Test
+*   Author Email : pavel.siarzhantau@gmail.com 
+*   Purpose      : primary purpose - test all functionality and methods which 
+                   provides by TriggerHandler class
+*   Revisions    : 30/09/2022 - Original
+*      
+*
+**/
 @isTest
 private class TriggerHandler_Test {
     private static final String TRIGGER_CONTEXT_ERROR = 'Trigger handler called outside of Trigger execution';

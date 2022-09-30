@@ -1,3 +1,13 @@
+/** 
+*
+*   Class Name   : SensorsControllerTest
+*   Author Email : pavel.siarzhantau@gmail.com 
+*   Purpose      : primary purpose - test all methods with different scenarious in
+                   SensorsController class
+*   Revisions    : 30/09/2022 - Original
+*      
+*
+**/
 @isTest
 public with sharing class SensorsControllerTest {
     @isTest

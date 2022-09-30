@@ -2,14 +2,10 @@
 <template>
     <lightning-card title="Sensors" icon-name="standard:activations">
         <div if:false={hideSensorSpinner} class="slds-is-relative">
-            <lightning-spinner alternative-text="Loading..." variant="brand">
-            </lightning-spinner>
+            <lightning-spinner alternative-text="Loading..." variant="brand"> </lightning-spinner>
         </div>
         <div if:true={hideSensorSpinner}>
-            <div
-                class="slds-p-horizontal_small slds-m-bottom_medium"
-                if:true={showSensors}
-            >
+            <div class="slds-p-horizontal_small slds-m-bottom_medium" if:true={showSensors}>
                 <div class="data-table-container">
                     <lightning-datatable
                         class="data-table"
@@ -23,10 +19,7 @@
                     </lightning-datatable>
                 </div>
             </div>
-            <div
-                class="slds-p-horizontal_small slds-m-bottom_medium"
-                if:false={showSensors}
-            >
+            <div class="slds-p-horizontal_small slds-m-bottom_medium" if:false={showSensors}>
                 Please create Sensors.
             </div>
         </div>

@@ -1,3 +1,13 @@
+/** 
+*
+*   Class Name   : SensorPlatformEventHelper
+*   Author Email : pavel.siarzhantau@gmail.com 
+*   Purpose      : primary purpose - publish platform event after dml operation, 
+                   due to lwc component might rerender UI.
+*   Revisions    : 30/09/2022 - Original
+*      
+*
+**/
 public with sharing class SensorPlatformEventHelper {
     public class SensorPaltformEventException extends Exception {
     }
@@ -35,25 +45,22 @@ public with sharing class SensorPlatformEventHelper {
                 event.message__c = objectName + '(s) were inserted.';
                 events.add(event);
                 sendEventToEventBus(event);
-                System.debug(objectName + '(s) was inserted');
             }
             when 'AFTER_UPDATE' {
                 if (!isInsert) {
                     event.message__c = objectName + '(s) were updated.';
                     events.add(event);
                     sendEventToEventBus(event);
-                    System.debug(objectName + '(s) were updated');
                 }
             }
             when 'AFTER_DELETE' {
                 event.message__c = objectName + '(s) were deleted.';
                 events.add(event);
                 sendEventToEventBus(event);
-                System.debug(objectName + '(s) were deleted');
             }
         }
     }
-    @TestVisible
+
     private static void sendEventToEventBus(Sensor_Tracking_Event__e event) {
         try {
             if (isTest && Test.isRunningTest()) {

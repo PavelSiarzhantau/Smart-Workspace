@@ -71,6 +71,7 @@ const columns = [
 
 export default class SensorsEvents extends LightningElement {
   columns = columns;
+  @track data = [];
   @api selectedSensor;
   @api showSensorEvents;
   @api hideEventSpinner = false;
@@ -78,6 +79,11 @@ export default class SensorsEvents extends LightningElement {
   @api sensorName;
   @api maxVectorLength;
   @track inlineErrors;
+
+  @api
+  enterEventsToDataTable(events) {
+    this.data = this.prepareSensorsEventsData(events);
+  }
 
   prepareSensorsEventsData(data) {
     return data.map((record) => {
@@ -102,10 +108,11 @@ export default class SensorsEvents extends LightningElement {
   }
   async handleSave(event) {
     // Convert data-table draft values into record objects
-    const rec = event.detail.draftValues;
+    const records = event.detail.draftValues;
+    //handle errors while inline editing
     this.inlineErrors = {};
     let rows = {};
-    rec.forEach((e) => {
+    records.forEach((e) => {
       let { Id, ...obj } = e;
       let preparedObject = { [e.Id]: obj };
 
@@ -132,16 +139,16 @@ export default class SensorsEvents extends LightningElement {
         }
       };
     } else {
-      const records = event.detail.draftValues.slice().map((draftValue) => {
+      //prepare recods to update after validation user's imput
+      const recordsToUpdate = records.slice().map((draftValue) => {
         const fields = Object.assign({}, draftValue);
         return { fields };
       });
-      // console.log(records);
       // Clear all data-table draft values
       this.template.querySelector("lightning-datatable").draftValues = [];
       try {
         // Update all records in parallel thanks to the UI API
-        const recordUpdatePromises = records.map((record) =>
+        const recordUpdatePromises = recordsToUpdate.map((record) =>
           updateRecord(record)
         );
         await Promise.all(recordUpdatePromises);

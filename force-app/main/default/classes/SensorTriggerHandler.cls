@@ -1,3 +1,13 @@
+/** 
+*
+*   Class Name   : SensorTriggerHandler
+*   Author Email : pavel.siarzhantau@gmail.com 
+*   Purpose      : primary purpose - separate operation types from Trigger on
+                   Sensor__c objects.
+*   Revisions    : 30/09/2022 - Original
+*      
+*
+**/
 public with sharing class SensorTriggerHandler extends TriggerHandler {
     public override void afterInsert() {
         SensorPlatformEventHelper.publishEvent(

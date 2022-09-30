@@ -1,3 +1,17 @@
+/** 
+*
+*   Class Name   : SensorRestServiceHelper
+*   Author Email : pavel.siarzhantau@gmail.com 
+*   Purpose      : primary purpose - perform different logic to prepare sensors and
+                   sensor events to save or update in database:
+                   -parse request body 
+                   -prevent duplicate sensors in database
+                   -assign sensors to sensor events
+                   -assign previous event to current event  in the right sequence 
+*   Revisions    : 30/09/2022 - Original
+*      
+*
+**/
 public with sharing class SensorRestServiceHelper {
     public static Map<String, List<Sensor_Event__c>> getParametersFromRequest(
         RestRequest request
@@ -8,9 +22,9 @@ public with sharing class SensorRestServiceHelper {
         try {
             params = (List<Object>) JSON.deserializeUntyped(
                 request.requestBody.toString()
-                    .replaceAll('[\'‘’"]', '"')
-                    .replaceAll('^(.*?)(")', '[')
-                    .replaceAll('(?:.(?!"))+$', ']')
+                .replaceAll('[\'‘’"]', '"')
+                .replaceAll('^(.*?)(")', '[')
+                .replaceAll('(?:.(?!"))+$', ']')
             );
         } catch (Exception e) {
             throw new SensorRestService.SensorException(

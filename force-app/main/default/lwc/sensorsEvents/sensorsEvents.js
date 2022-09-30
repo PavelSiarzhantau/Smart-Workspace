@@ -71,7 +71,6 @@ const columns = [
 
 export default class SensorsEvents extends LightningElement {
   columns = columns;
-  @track data = [];
   @api selectedSensor;
   @api showSensorEvents;
   @api hideEventSpinner = false;
@@ -79,10 +78,6 @@ export default class SensorsEvents extends LightningElement {
   @api sensorName;
   @api maxVectorLength;
   @track inlineErrors;
-  @api
-  enterEventsToDataTable(events) {
-    this.data = this.prepareSensorsEventsData(events);
-  }
 
   prepareSensorsEventsData(data) {
     return data.map((record) => {
@@ -128,7 +123,6 @@ export default class SensorsEvents extends LightningElement {
         Object.assign(rows, { [e.Id]: errorObject });
       }
     });
-    console.log("rows", JSON.stringify(rows));
     if (Object.keys(rows).length !== 0) {
       this.inlineErrors = {
         rows: rows,

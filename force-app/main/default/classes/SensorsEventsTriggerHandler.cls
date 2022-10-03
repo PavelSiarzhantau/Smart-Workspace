@@ -9,6 +9,8 @@
 *
 **/
 public with sharing class SensorsEventsTriggerHandler extends TriggerHandler {
+    public static boolean createArtificialError = false;
+    public with sharing class ArtificialErrorException extends Exception{}
     public override void afterInsert() {
         SensorPlatformEventHelper.publishEvent(
             Trigger.new,
@@ -28,6 +30,9 @@ public with sharing class SensorsEventsTriggerHandler extends TriggerHandler {
         );
     }
     public override void afterDelete() {
+        if(createArtificialError){
+            throw new ArtificialErrorException('Artificially generated error');
+        }
         SensorPlatformEventHelper.publishEvent(
             Trigger.old,
             String.valueOf(Trigger.OperationType)

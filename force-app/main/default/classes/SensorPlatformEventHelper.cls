@@ -20,20 +20,31 @@ public with sharing class SensorPlatformEventHelper {
     public static void publishEvent(List<SObject> sensorList, String context) {
         Sensor_Tracking_Event__e event = new Sensor_Tracking_Event__e();
         List<String> namesOfSensors = new List<String>();
+        Integer counter = 0;
+        Integer limitOfRowsToShow = 4;
         String objectName = sensorList[0]
             .getSObjectType()
             .getDescribe()
             .getLabel();
         for (SObject sensor : sensorList) {
-            if (sensor.getSObjectType() == Sensor__c.getSObjectType()) {
+            if (
+                sensor.getSObjectType() == Sensor__c.getSObjectType() &&
+                counter < limitOfRowsToShow
+            ) {
                 Sensor__c sen = (Sensor__c) sensor;
                 namesOfSensors.add(objectName + ': ' + sen.Name + '\n');
+                counter++;
             } else if (
-                sensor.getSObjectType() == Sensor_Event__c.getSObjectType()
+                sensor.getSObjectType() == Sensor_Event__c.getSObjectType() &&
+                counter < limitOfRowsToShow
             ) {
                 Sensor_Event__c evt = (Sensor_Event__c) sensor;
                 namesOfSensors.add(objectName + ': ' + evt.Name + '\n');
+                counter++;
             }
+        }
+        if (sensorList.size() > limitOfRowsToShow) {
+            namesOfSensors.add('...');
         }
         event.Sensors_names__c = String.join(namesOfSensors, '');
         switch on context {
@@ -42,19 +53,19 @@ public with sharing class SensorPlatformEventHelper {
                 System.debug('isInsert::: ' + isInsert);
             }
             when 'AFTER_INSERT' {
-                event.message__c = objectName + '(s) were inserted.';
+                event.message__c = objectName + '(s) successfully inserted.';
                 events.add(event);
                 sendEventToEventBus(event);
             }
             when 'AFTER_UPDATE' {
                 if (!isInsert) {
-                    event.message__c = objectName + '(s) were updated.';
+                    event.message__c = objectName + '(s) successfully updated.';
                     events.add(event);
                     sendEventToEventBus(event);
                 }
             }
             when 'AFTER_DELETE' {
-                event.message__c = objectName + '(s) were deleted.';
+                event.message__c = objectName + '(s) successfully deleted.';
                 events.add(event);
                 sendEventToEventBus(event);
             }

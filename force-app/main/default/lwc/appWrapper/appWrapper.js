@@ -7,12 +7,14 @@ import getSensorsRecords from "@salesforce/apex/SensorsController.getSensorsReco
 import getSensorsEventsRecords from "@salesforce/apex/SensorEvenstController.getSensorsEventsRecords";
 import { refreshApex } from "@salesforce/apex";
 import { reduceErrors } from "c/ldsUtils";
-export default class AppWrapper extends LightningElement {
+import { NavigationMixin } from "lightning/navigation";
+export default class AppWrapper extends NavigationMixin(LightningElement) {
   @track selectedSensor;
   @api channelName = "/event/Sensor_Tracking_Event__e";
   @track preSelectedRow = [];
   @track events;
   @track sensors;
+  toUrl;
   subscription = {};
   isCssLoaded = false;
   showSensors;
@@ -49,7 +51,7 @@ export default class AppWrapper extends LightningElement {
         this.ShowToastEvent(error.name(), error.message(), "error", "pester");
       });
   }
-  //get sensors from database 
+  //get sensors from database
   @wire(getSensorsRecords)
   getSensors(result) {
     this._wiredData = result;
@@ -144,7 +146,7 @@ export default class AppWrapper extends LightningElement {
     const messageCallback = (response) => {
       let obj = JSON.parse(JSON.stringify(response));
       let objData = obj.data.payload;
-      this.showToast(
+      this.navigateToListView(
         objData.message__c,
         objData.Sensors_names__c,
         "success",
@@ -158,13 +160,40 @@ export default class AppWrapper extends LightningElement {
       this.subscription = response;
     });
   }
+
+  //create link to list view and fire toast message
+  navigateToListView = (title, message, variant, mode) => {
+    let objName = title.includes("Sensor_Event")
+      ? "Sensor_Event__c"
+      : "Sensor__c";
+    this[NavigationMixin.GenerateUrl]({
+      type: "standard__objectPage",
+      attributes: {
+        objectApiName: objName,
+        actionName: "list"
+      },
+      state: {
+        filterName: "All"
+      }
+    }).then((url) => {
+      this.showToast(title, message, variant, mode, url);
+    });
+  };
+
   //show toast message to user
-  showToast = (title, message, variant, mode) => {
+  showToast = (title, message, variant, mode, url) => {
     const evt = new ShowToastEvent({
       title: title,
-      message: message,
+      message: "{0} {1}",
       variant: variant,
-      mode: mode
+      mode: mode,
+      messageData: [
+        message,
+        {
+          url: url,
+          label: "\n here"
+        }
+      ]
     });
     this.dispatchEvent(evt);
   };
@@ -172,6 +201,7 @@ export default class AppWrapper extends LightningElement {
   refreshSensorEvents = () => {
     refreshApex(this._wiredDataEvents);
   };
+
   refreshSensors = () => {
     refreshApex(this._wiredData);
   };

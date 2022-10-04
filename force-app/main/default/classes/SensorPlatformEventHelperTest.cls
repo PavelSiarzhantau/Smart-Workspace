@@ -1,17 +1,20 @@
-/** 
-*
-*   Class Name   : SensorPlatformEventHelperTest
-*   Author Email : pavel.siarzhantau@gmail.com 
-*   Purpose      : primary purpose - test all scenario in SensorPlatformEventHelper class
-*   Revisions    : 30/09/2022 - Original
-*      
-*
-**/
+/**
+ *
+ *   Class Name   : SensorPlatformEventHelperTest
+ *   Author Email : pavel.siarzhantau@gmail.com
+ *   Purpose      : primary purpose - test all scenario in SensorPlatformEventHelper class
+ *   Revisions    : 30/09/2022 - Original
+ *
+ *
+ **/
 @isTest
 public with sharing class SensorPlatformEventHelperTest {
     @testSetup
     static void makeData() {
-        List<Sensor__c> createdSensors = TestDataFactory.insertListOfSensors(200, true);
+        List<Sensor__c> createdSensors = TestDataFactory.insertListOfSensors(
+            200,
+            true
+        );
     }
 
     @isTest
@@ -26,45 +29,63 @@ public with sharing class SensorPlatformEventHelperTest {
             result = EventBus.publish(event);
             Test.stopTest();
         }
-        System.assertEquals(true, result.isSuccess(), 'Test: testPublishEvent() method if failed.');
+        System.assertEquals(
+            true,
+            result.isSuccess(),
+            'Test: testPublishEvent() method if failed.'
+        );
     }
     @isTest
     static void testPublishEventBeforeInsert() {
         User user = TestDataFactory.createTestUser('Integration Profile');
-        List<Sensor__c> listofSensors = TestDataFactory.insertListOfSensors(200, false);
+        List<Sensor__c> listofSensors = TestDataFactory.insertListOfSensors(
+            200,
+            false
+        );
 
         System.runAs(user) {
             Test.startTest();
-            SensorPlatformEventHelper.publishEvent(listofSensors, 'BEFORE_INSERT');
+            SensorPlatformEventHelper.publishEvent(
+                listofSensors,
+                'BEFORE_INSERT'
+            );
             Test.stopTest();
         }
         System.assertEquals(
             true,
             SensorPlatformEventHelper.isInsert,
-            'Test: testPublishEventBeforeInsert() method is failed'
+            'Test: testPublishEventBeforeInsert() method failed'
         );
     }
     @isTest
     static void testPublishEventAfterInsert() {
         User user = TestDataFactory.createTestUser('Integration Profile');
-        List<Sensor__c> listofSensors = TestDataFactory.insertListOfSensors(200, false);
+        List<Sensor__c> listofSensors = TestDataFactory.insertListOfSensors(
+            200,
+            false
+        );
         System.runAs(user) {
             Test.startTest();
-            SensorPlatformEventHelper.publishEvent(listofSensors, 'AFTER_INSERT');
+            SensorPlatformEventHelper.publishEvent(
+                listofSensors,
+                'AFTER_INSERT'
+            );
             Test.stopTest();
         }
         System.assertEquals(
             1,
             SensorPlatformEventHelper.events.size(),
-            'Test: testPublishEventAfterInsert() method is failed'
+            'Test: testPublishEventAfterInsert() method failed'
         );
         System.assertEquals(
-            200,
-            SensorPlatformEventHelper.events[0].Sensors_names__c.split('\n').size(),
-            'Test: testPublishEventAfterInsert() method is failed'
+            5,
+            SensorPlatformEventHelper.events[0]
+                .Sensors_names__c.split('\n')
+                .size(),
+            'Test: testPublishEventAfterInsert() method failed'
         );
         System.assertEquals(
-            'Sensor(s) were inserted.',
+            'Sensor(s) successfully inserted.',
             SensorPlatformEventHelper.events[0].message__c,
             'Test: testPublishEventAfterInsert() is failed'
         );
@@ -72,48 +93,67 @@ public with sharing class SensorPlatformEventHelperTest {
     @isTest
     static void testPublishEventAfterUpdate() {
         User user = TestDataFactory.createTestUser('Integration Profile');
-        List<Sensor__c> listofSensors = TestDataFactory.insertListOfSensors(200, false);
+        List<Sensor__c> listofSensors = TestDataFactory.insertListOfSensors(
+            200,
+            false
+        );
         System.runAs(user) {
             Test.startTest();
-            SensorPlatformEventHelper.publishEvent(listofSensors, 'AFTER_UPDATE');
+            SensorPlatformEventHelper.publishEvent(
+                listofSensors,
+                'AFTER_UPDATE'
+            );
             Test.stopTest();
         }
         System.assertEquals(
             1,
             SensorPlatformEventHelper.events.size(),
-            'Test: testPublishEventAfterInsert() method is failed'
+            'Test: testPublishEventAfterInsert() method failed'
         );
         System.assertEquals(
-            200,
-            SensorPlatformEventHelper.events[0].Sensors_names__c.split('\n').size(),
-            'Test: testPublishEventAfterInsert() method is failed'
+            5,
+            SensorPlatformEventHelper.events[0]
+                .Sensors_names__c.split('\n')
+                .size(),
+            'Test: testPublishEventAfterInsert() method failed'
         );
         System.assertEquals(
-            'Sensor(s) were updated.',
+            'Sensor(s) successfully updated.',
             SensorPlatformEventHelper.events[0].message__c,
-            'Test: testPublishEventAfterInsert() is failed'
+            'Test: testPublishEventAfterInsert() failed'
         );
     }
     @isTest
     static void testPublishEventAvoidAfterUdpateEvent() {
         User user = TestDataFactory.createTestUser('Integration Profile');
-        List<Sensor__c> listofSensors = TestDataFactory.insertListOfSensors(200, false);
+        List<Sensor__c> listofSensors = TestDataFactory.insertListOfSensors(
+            200,
+            false
+        );
         System.runAs(user) {
             Test.startTest();
-            SensorPlatformEventHelper.publishEvent(listofSensors, 'BEFORE_INSERT');
-            SensorPlatformEventHelper.publishEvent(listofSensors, 'AFTER_UPDATE');
+            SensorPlatformEventHelper.publishEvent(
+                listofSensors,
+                'BEFORE_INSERT'
+            );
+            SensorPlatformEventHelper.publishEvent(
+                listofSensors,
+                'AFTER_UPDATE'
+            );
             Test.stopTest();
         }
         System.assertEquals(
             0,
             SensorPlatformEventHelper.events.size(),
-            'Test: testPublishEventAfterInsert() method is failed'
+            'Test: testPublishEventAfterInsert() method failed'
         );
     }
     @isTest
     static void testPublishEventWithInsertTest() {
         User user = TestDataFactory.createTestUser('Integration Profile');
-        List<Sensor__c> listofSensors = TestDataFactory.createListOfSensors(200);
+        List<Sensor__c> listofSensors = TestDataFactory.createListOfSensors(
+            200
+        );
         System.runAs(user) {
             Test.startTest();
             insert listofSensors;
@@ -122,12 +162,12 @@ public with sharing class SensorPlatformEventHelperTest {
         System.assertEquals(
             1,
             SensorPlatformEventHelper.events.size(),
-            'Test: testPublishEventWithDmlTest() is failed.'
+            'Test: testPublishEventWithDmlTest() failed.'
         );
         System.assertEquals(
-            'Sensor(s) were inserted.',
+            'Sensor(s) successfully inserted.',
             SensorPlatformEventHelper.events[0].message__c,
-            'Test: testPublishEventWithDmlTest() is failed.'
+            'Test: testPublishEventWithDmlTest() failed.'
         );
     }
     @isTest
@@ -146,12 +186,12 @@ public with sharing class SensorPlatformEventHelperTest {
         System.assertEquals(
             1,
             SensorPlatformEventHelper.events.size(),
-            'Test: testPublishEventWithUpdateTest() is failed.'
+            'Test: testPublishEventWithUpdateTest() failed.'
         );
         System.assertEquals(
-            'Sensor(s) were updated.',
+            'Sensor(s) successfully updated.',
             SensorPlatformEventHelper.events[0].message__c,
-            'Test: testPublishEventWithUpdateTest() is failed.'
+            'Test: testPublishEventWithUpdateTest() failed.'
         );
     }
     @isTest
@@ -160,8 +200,7 @@ public with sharing class SensorPlatformEventHelperTest {
         List<Sensor__c> listofSensors = new List<Sensor__c>();
         System.runAs(user) {
             Test.startTest();
-            listofSensors = [SELECT Name 
-                             FROM Sensor__c];
+            listofSensors = [SELECT Name FROM Sensor__c];
             delete listofSensors;
             Test.stopTest();
         }
@@ -171,46 +210,47 @@ public with sharing class SensorPlatformEventHelperTest {
             'Test: testPublishEventWithDeleteTest() failed'
         );
         System.assertEquals(
-            'Sensor(s) were deleted.',
+            'Sensor(s) successfully deleted.',
             SensorPlatformEventHelper.events[0].message__c,
             'Test: testPublishEventWithDeleteTest() failed'
         );
     }
     @isTest
-    static void testPublisEvenWithtDeleteEventsTest(){
+    static void testPublisEvenWithtDeleteEventsTest() {
         User user = TestDataFactory.createTestUser('Integration Profile');
         List<Sensor_Event__c> listOfSensorEvents = new List<Sensor_Event__c>();
         List<Sensor__c> listOfSensors;
-        System.runAs(user){
+        System.runAs(user) {
             Test.startTest();
-            listOfSensors = [SELECT Id,
-                                    Name 
-                             FROM Sensor__c];
-            for(Sensor__c sensor: listOfSensors){
-               List<Sensor_Event__c> events = TestDataFactory.createListofEvents(4);
-               for(Sensor_Event__c event : events){
-                event.Sensor__c = sensor.Id;
-                listOfSensorEvents.add(event);
-               }
+            listOfSensors = [SELECT Id, Name FROM Sensor__c];
+            for (Sensor__c sensor : listOfSensors) {
+                List<Sensor_Event__c> events = TestDataFactory.createListofEvents(
+                    4
+                );
+                for (Sensor_Event__c event : events) {
+                    event.Sensor__c = sensor.Id;
+                    listOfSensorEvents.add(event);
+                }
             }
             insert listOfSensorEvents;
-            List<Sensor_Event__c> events = [SELECT Id
-                                            FROM Sensor_Event__c];
+            List<Sensor_Event__c> events = [SELECT Id FROM Sensor_Event__c];
             delete events;
             Test.stopTest();
-            }
-            
-        System.assertEquals(0, [SELECT Id,
-                                       Name 
-                                FROM Sensor_Event__c].size(),
-                           'Test: testPublisEventDeleteEventsTest() method failed');
-        
+        }
+
+        System.assertEquals(
+            0,
+            [SELECT Id, Name FROM Sensor_Event__c].size(),
+            'Test: testPublisEventDeleteEventsTest() method failed'
+        );
     }
     @isTest
     static void testPublisEventNegative() {
         User user = TestDataFactory.createTestUser('Integration Profile');
         Sensor_Tracking_Event__e event = new Sensor_Tracking_Event__e();
-        List<Sensor__c> listofSensors = TestDataFactory.createListOfSensors(200);
+        List<Sensor__c> listofSensors = TestDataFactory.createListOfSensors(
+            200
+        );
         List<String> namesOfSensors = new List<String>();
         Database.SaveResult result;
         for (Sensor__c sensor : listofSensors) {
@@ -222,13 +262,19 @@ public with sharing class SensorPlatformEventHelperTest {
             result = Eventbus.publish(event);
             Test.stopTest();
         }
-        System.assertEquals(false, result.isSuccess(), 'Test: testPublisEventNegative() is failed');
+        System.assertEquals(
+            false,
+            result.isSuccess(),
+            'Test: testPublisEventNegative() failed'
+        );
     }
     @isTest
     static void testSendEventToEventBus() {
         User user = TestDataFactory.createTestUser('Integration Profile');
         Sensor_Tracking_Event__e event = new Sensor_Tracking_Event__e();
-        List<Sensor__c> listofSensors = TestDataFactory.createListOfSensors(200);
+        List<Sensor__c> listofSensors = TestDataFactory.createListOfSensors(
+            200
+        );
         String exceptedString = 'Some error occured, when publishing event: ';
         event.message__c = 'Test message';
         event.Sensors_names__c = 'Test names';
@@ -237,12 +283,15 @@ public with sharing class SensorPlatformEventHelperTest {
         System.runAs(user) {
             Test.startTest();
             try {
-                SensorPlatformEventHelper.publishEvent(listofSensors, 'AFTER_INSERT');
+                SensorPlatformEventHelper.publishEvent(
+                    listofSensors,
+                    'AFTER_INSERT'
+                );
             } catch (SensorPlatformEventHelper.SensorPaltformEventException e) {
                 System.assertEquals(
                     true,
                     e.getMessage().contains(exceptedString),
-                    'Test: testSendEventToEventBus() is failed'
+                    'Test: testSendEventToEventBus() failed'
                 );
             }
             Test.stopTest();

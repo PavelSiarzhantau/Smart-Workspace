@@ -1,11 +1,19 @@
 <!-- sldsValidatorIgnore -->
 <template>
-    <lightning-card title="Sensors Events" icon-name="standard:activations" class="datatable">
+    <lightning-card
+        title="Sensors Events"
+        icon-name="standard:activations"
+        class="datatable"
+    >
         <div if:false={hideEventSpinner} class="slds-is-relative">
-            <lightning-spinner alternative-text="Loading..." variant="brand"> </lightning-spinner>
+            <lightning-spinner alternative-text="Loading..." variant="brand">
+            </lightning-spinner>
         </div>
         <div if:true={hideEventSpinner}>
-            <div class="slds-p-horizontal_small slds-m-bottom_medium" if:true={showSensorEvents}>
+            <div
+                class="slds-p-horizontal_small slds-m-bottom_medium"
+                if:true={showSensorEvents}
+            >
                 <p class="slds-p-horizontal_small slds-m-bottom_medium">
                     Sensor Name:
                     <lightning-badge label={sensorName}></lightning-badge>
@@ -29,8 +37,11 @@
                     </div>
                 </div>
             </div>
-            <div class="slds-p-horizontal_small slds-m-bottom_medium" if:false={showSensorEvents}>
-                Please create Sensors Events.
+            <div
+                class="slds-p-horizontal_small slds-m-bottom_medium"
+                if:false={showSensorEvents}
+            >
+                Please create Sensor Events.
             </div>
         </div>
     </lightning-card>

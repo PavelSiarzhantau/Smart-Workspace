@@ -4,8 +4,7 @@
     <label>Sensors Tracking</label>
     <oauthConfig>
         <callbackUrl>https://</callbackUrl>
-        <consumerKey
-    >3MVG9wt4IL4O5wvJQQSS8b.KMaMwbediVY.U2.gwtNqreuI4PlwsS60.ZlJ6h82I60ESkspkRVeWFubSwPr_N</consumerKey>
+        <consumerKey></consumerKey>
         <isAdminApproved>false</isAdminApproved>
         <isConsumerSecretOptional>false</isConsumerSecretOptional>
         <isIntrospectAllTokens>false</isIntrospectAllTokens>
